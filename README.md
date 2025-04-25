@@ -32,9 +32,13 @@ deactivate
 
 Call the Gauss_Jordan function from Gauss_Jordan.py in the src folder to solve the simultaneous equations.
 
+<br>
+
 ## math/geodesic.py
 
 Given the coordinates of two points on a sphere of origin center and radius r, find the length of the shortest geodesic between them.
+
+<br>
 
 ## math/prime_numbers.py
 
@@ -44,6 +48,7 @@ This code was used for verification purposes when writing the following article.
 
 https://www.chart.co.jp/subject/sugaku/suken_tsushin/91/91-5.pdf
 
+<br>
 
 ## math/square_numbers.py
 
@@ -57,9 +62,13 @@ This conjecture was later proven.
 
 https://mathlog.info/articles/5qPoXSlvkzpEFBrg1nbb
 
+<br>
+
 ## others/sql_lite.py
 
 CURSOR Practice.
+
+<br>
 
 ## others/star_sun_moon.py
 

@@ -1,27 +1,35 @@
 # coding: utf-8
 
-#%%
-
 import numpy as np
-import numpy.linalg
-from src import Gauss_Jordan 
+from src import Gauss_Jordan
 
-#%%
+# ------------------------------
+# Example: Solving a linear system using Gauss-Jordan elimination
+# ------------------------------
 
-#係数行列を定義。例えば3と書くときは3ではなく3.と書くこと。
-A = np.array([[4.,2.,1.],[2.,-1.,2.],[1.,4.,1.]])
+# Coefficient matrix A (ensure all entries are floats)
+A = np.array([
+    [4.0, 2.0, 1.0],
+    [2.0, -1.0, 2.0],
+    [1.0, 4.0, 1.0]
+])
 
-print(A)
+# Right-hand side vector b
+b = np.array([
+    [10.0],
+    [5.0],
+    [12.0]
+])
 
-#定数項ベクトルを定義。
-b = np.array([[10.],[5.],[12.]])
-
-# %%
 if __name__ == "__main__":
-    Gauss_Jordan.Gauss_J(A,b)
+    print("Solving the system Ax = b using custom Gauss-Jordan method:\n")
+    print("Matrix A:")
+    print(A)
+    print("\nVector b:")
+    print(b)
 
-#linalgを使うと１行で済む。（確認用）
-#print(np.linalg.solve(A,b))
+    print("\nSolution (Gauss-Jordan):")
+    Gauss_Jordan.Gauss_J(A, b)
 
-
-# %%
+    print("\nSolution (NumPy built-in):")
+    print(np.linalg.solve(A, b))
