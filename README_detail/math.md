@@ -2,7 +2,7 @@
 # Contents of each file
 
 
-## [calculation.py](https://github.com/yakinoki/code-sandbox-lab/blob/develop/python/math/calculation.py)
+## [calculation.py](https://github.com/yakinoki/code-sandbox-lab/blob/develop/math/calculation.py)
 
 Call the Gauss_Jordan function from Gauss_Jordan.py in the src folder to solve the simultaneous equations.
 
