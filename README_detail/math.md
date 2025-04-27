@@ -1,7 +1,6 @@
 
 # Contents of each file
 
-![ソースコードサイズ](https://img.shields.io/github/languages/code-size/yakinoki/test_codes/math)
 
 ## [calculation.py](https://github.com/yakinoki/code-sandbox-lab/blob/develop/python/math/calculation.py)
 

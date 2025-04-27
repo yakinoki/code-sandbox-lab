@@ -1,3 +1,5 @@
+![ソースコードサイズ](https://img.shields.io/github/languages/code-size/yakinoki/code-sandbox-lab)
+
 
 You can use the following commands to set up a virtual environment and install the necessary packages:
 
