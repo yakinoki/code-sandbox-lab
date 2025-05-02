@@ -19,9 +19,23 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-To exit (deactivate) the virtual environment, simply run:
+If you encounter an error like:
 
+```vbnet
+ERROR: Could not install packages due to an OSError: [Errno 2] No such file or directory: 'C:\\ci\\argon2-cffi_...'
+```
+
+Try installing the problematic package manually with no cache:
+```sh
+pip install --no-cache-dir argon2-cffi
+```
+
+Alternatively, if you're using conda, the following may help:
+```sh
+conda install -c conda-forge argon2-cffi
+```
+
+To exit (deactivate) the virtual environment, simply run:
 ```sh
 deactivate
 ```
-
