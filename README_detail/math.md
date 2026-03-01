@@ -36,4 +36,12 @@ This conjecture was later proven.
 
 https://mathlog.info/articles/5qPoXSlvkzpEFBrg1nbb
 
+### Note (Added later)
+
+After writing this code and article, I learned that this conjecture had already been proven in the literature.
+
+https://londmathsoc.onlinelibrary.wiley.com/doi/abs/10.1112/jlms/s1-14.3.194
+https://www.semanticscholar.org/paper/The-product-of-consecutive-integers-is-never-a-Erd%C3%B6s-Selfridge/8637a3b34ded4db991e3288ce295e9b469468292
+
+
 
