@@ -39,3 +39,13 @@ To exit (deactivate) the virtual environment, simply run:
 ```sh
 deactivate
 ```
+
+## GitHub Actions
+
+A GitHub Action is configured to run the same `pre-commit` checks automatically on every push and pull request.
+
+The workflow file is located at `.github/workflows/pre-commit.yml`.
+
+No extra setup is required on GitHub; once the repository is pushed, the action will run automatically for:
+- `push` to `main` or `master`
+- `pull_request` targeting `main` or `master`
