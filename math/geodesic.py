@@ -1,90 +1,111 @@
 # coding: utf-8
-
-#%%
-
-#原点中心、半径rの球面上の2点の座標が与えられた時、その間の最短測地線の長さを求める。
-#ここでは共に北半球、東側の点とする。また北極点は除く。
+"""球面上の 2 点間の最短距離を求め、可視化するモジュール。"""
 
 import math
+from typing import Sequence, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-#まず半径を決める。
-r=float(input())
-print("半径は{}".format(r))
+Vector3 = Tuple[float, float, float]
 
-#一つ目の座標を決定。
-x1=float(input())
-y1=float(input())
-z1=math.sqrt(r**2-x1**2-y1**2)
 
-print("一つ目の座標は({},{},{})".format(x1,y1,z1))
-theta1 = math.acos(x1/math.sqrt(x1**2+y1**2))
+def input_float(prompt: str) -> float:
+    while True:
+        try:
+            return float(input(prompt))
+        except ValueError:
+            print("数値を入力してください。")
 
-phi1 = math.atan(z1/math.sqrt(x1**2+y1**2))
 
-x1 = r * math.cos(theta1)*math.cos(phi1)
-print("x1={}".format(x1))
-y1 = r * math.sin(theta1)*math.cos(phi1)
-print("y1={}".format(y1))
-z1 = r * math.sin(phi1)
-print("z1={}".format(z1))
+def point_on_sphere_from_xy(x: float, y: float, radius: float) -> Vector3:
+    squared = radius ** 2 - x ** 2 - y ** 2
+    if squared < 0:
+        raise ValueError("x と y の値が半径を超えています。")
+    return x, y, math.sqrt(squared)
 
-print("緯度は{}".format(phi1))
-print("経度は{}".format(theta1))
 
-#二つ目の座標を決定。
-x2=float(input())
-y2=float(input())
-z2=math.sqrt(r**2-x2**2-y2**2)
+def spherical_coordinates(point: Vector3) -> Tuple[float, float]:
+    x, y, z = point
+    longitude = math.atan2(y, x)
+    latitude = math.atan2(z, math.hypot(x, y))
+    return latitude, longitude
 
-print("二つ目の座標は({},{},{})".format(x2,y2,z2))
 
-theta2 = math.acos(x2/math.sqrt(x2**2+y2**2))
-print("経度は{}".format(theta2))
+def great_circle_distance(point1: Vector3, point2: Vector3, radius: float) -> float:
+    dot = sum(a * b for a, b in zip(point1, point2))
+    cos_angle = max(-1.0, min(1.0, dot / (radius ** 2)))
+    return radius * math.acos(cos_angle)
 
-phi2 = math.atan(z2/math.sqrt(x2**2+y2**2))
-print("緯度は{}".format(phi2))
 
-x2 = r * math.cos(theta2)*math.cos(phi2)
-#print("x2={}".format(x2))
-y2 = r * math.sin(theta2)*math.cos(phi2)
-#print("y2={}".format(y2))
-z2 = r * math.sin(phi2)
-#print("z2={}".format(z2))
+def generate_geodesic_curve(point1: Vector3, point2: Vector3, radius: float, steps: int = 100) -> np.ndarray:
+    p1 = np.array(point1) / radius
+    p2 = np.array(point2) / radius
+    cos_angle = float(np.dot(p1, p2))
+    cos_angle = max(-1.0, min(1.0, cos_angle))
+    omega = math.acos(cos_angle)
+    if omega < 1e-12:
+        return np.tile(np.array(point1), (steps, 1))
 
-d = r * math.acos(math.sin(theta1)*math.sin(theta2) + math.cos(theta1)*math.cos(theta2)*math.cos(phi1-phi2))
+    sin_omega = math.sin(omega)
+    t = np.linspace(0.0, 1.0, steps)
+    curve = [
+        (math.sin((1.0 - tt) * omega) / sin_omega) * p1
+        + (math.sin(tt * omega) / sin_omega) * p2
+        for tt in t
+    ]
+    return np.vstack(curve) * radius
 
-print("二点間の球面上の距離は{}".format(d))
 
-# 2つの点を配列に格納
-points = [(x1, y1, z1), (x2, y2, z2)]
-
-# 可視化のための関数
-def plot_geodesic(points, r):
+def plot_geodesic(points: Sequence[Vector3], radius: float) -> None:
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    
-    # 球面をプロット
+    ax = fig.add_subplot(111, projection="3d")
+
     u = np.linspace(0, 2 * np.pi, 100)
     v = np.linspace(0, np.pi, 100)
-    x = r * np.outer(np.cos(u), np.sin(v))
-    y = r * np.outer(np.sin(u), np.sin(v))
-    z = r * np.outer(np.ones(np.size(u)), np.cos(v))
-    ax.plot_surface(x, y, z, color='b', alpha=0.1)
-    
-    # 2点をプロット
-    x, y, z = zip(*points)
-    ax.scatter(x, y, z, c='r', marker='o', s=100)
-    
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Z')
+    x = radius * np.outer(np.cos(u), np.sin(v))
+    y = radius * np.outer(np.sin(u), np.sin(v))
+    z = radius * np.outer(np.ones_like(u), np.cos(v))
+    ax.plot_surface(x, y, z, color="cyan", alpha=0.15, edgecolor="none")
+
+    geodesic = generate_geodesic_curve(points[0], points[1], radius)
+    ax.plot(geodesic[:, 0], geodesic[:, 1], geodesic[:, 2], color="red", linewidth=2, label="Geodesic")
+
+    xs, ys, zs = zip(*points)
+    ax.scatter(xs, ys, zs, c="blue", s=80, label="Points")
+    for idx, (x_val, y_val, z_val) in enumerate(points, start=1):
+        ax.text(x_val, y_val, z_val, f"P{idx}")
+
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Z")
+    ax.set_title("Sphere Geodesic")
+    ax.legend()
+    ax.set_box_aspect([1, 1, 1])
     plt.show()
 
-# 可視化関数を呼び出し
-plot_geodesic(points, r)
 
-#%%
+def main() -> None:
+    radius = input_float("半径 r を入力してください: ")
+    print(f"半径は {radius} です。\n")
+
+    points: list[Vector3] = []
+    for index in range(1, 3):
+        x = input_float(f"{index}点目の x 座標を入力してください: ")
+        y = input_float(f"{index}点目の y 座標を入力してください: ")
+        point = point_on_sphere_from_xy(x, y, radius)
+        latitude, longitude = spherical_coordinates(point)
+
+        print(f"{index}点目の座標: {point}")
+        print(f"緯度: {latitude:.6f}, 経度: {longitude:.6f}\n")
+        points.append(point)
+
+    distance = great_circle_distance(points[0], points[1], radius)
+    print(f"二点間の球面上の最短距離: {distance:.6f}\n")
+
+    plot_geodesic(points, radius)
+
+
+if __name__ == "__main__":
+    main()
 
